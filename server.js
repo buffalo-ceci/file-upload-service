@@ -54,6 +54,48 @@ app.post('/upload', upload.single('file'), (req, res) => {
   });
 });
 
+
+// Upload endpoint for base64 JSON (for n8n compatibility)
+app.post('/upload-base64', (req, res) => {
+  try {
+    const { data, filename } = req.body;
+    
+    if (!data || !filename) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing data or filename'
+      });
+    }
+    
+    // Convert base64 to buffer
+    const buffer = Buffer.from(data, 'base64');
+    
+    // Generate filename with timestamp if not provided
+    const finalFilename = `${Date.now()}-${filename}`;
+    const filePath = path.join(uploadDir, finalFilename);
+    
+    // Write file
+    fs.writeFileSync(filePath, buffer);
+    
+    // Get file stats for response
+    const fileStats = fs.statSync(filePath);
+    const fileUrl = `${req.protocol}://${req.get('host')}/files/${finalFilename}`;
+    
+    res.json({
+      success: true,
+      filename: finalFilename,
+      url: fileUrl,
+      size: fileStats.size,
+      mimetype: 'application/octet-stream'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
