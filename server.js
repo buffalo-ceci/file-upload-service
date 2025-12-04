@@ -58,6 +58,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
 // Upload endpoint for base64 JSON (for n8n compatibility)
 app.post('/upload-base64', (req, res) => {
   try {
+        const uploadDir = path.join(__dirname, 'uploads');
     const { data, filename } = req.body;
     
     if (!data || !filename) {
