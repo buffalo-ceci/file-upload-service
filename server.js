@@ -43,7 +43,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
     });
   }
 
-  const fileUrl = `${req.protocol}://${req.get('host')}/files/${req.file.filename}`;
+  const fileUrl = `${'https'}://${req.get('host')}/files/${req.file.filename}`;
 
   res.json({
     success: true,
@@ -80,7 +80,7 @@ app.post('/upload-base64', (req, res) => {
     
     // Get file stats for response
     const fileStats = fs.statSync(filePath);
-    const fileUrl = `${req.protocol}://${req.get('host')}/files/${finalFilename}`;
+    const fileUrl = `${'https'}://${req.get('host')}/files/${finalFilename}`;
     
     res.json({
       success: true,
